@@ -13,7 +13,7 @@
 **(주의)** 이 프로젝트는 **Unity**의 **ml-agent를 사용하지 않습니다.**
 
 ### 학습 녹화 비디오
-![link youtube](https://img.youtube.com/vi/-AmrmdgaHVo/0.jpg)](https://youtu.be/-AmrmdgaHVo)
+[![link youtube](https://img.youtube.com/vi/-AmrmdgaHVo/0.jpg)](https://youtu.be/-AmrmdgaHVo)
 
 #### 상세한 문서화는 추후에 올리겠습니다
 
