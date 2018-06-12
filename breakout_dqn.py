@@ -33,13 +33,11 @@ class DQNAgent:
         self.batch_size = 64
         self.train_start = 5000
         self.update_target_rate = 1000
-        self.discount_factor = 0.90
+        self.discount_factor = 0.99
         self.learning_rate = 0.001
         self.memory = deque(maxlen=10000)
         self.model = self.build_model()
         self.target_model = self.build_model()
-        if self.load_model:
-            self.model.load_weights("./save_model/breakout_dqn6_.h5")
         self.update_target_model()
         self.sess = tf.InteractiveSession()
         K.set_session(self.sess)
@@ -53,8 +51,8 @@ class DQNAgent:
 
     def build_model(self):
         model = Sequential()
-        model.add(Dense(16,input_dim=self.state_size,activation='relu',kernel_initializer="he_uniform"))
-        model.add(Dense(16,activation='relu',kernel_initializer="he_uniform"))
+        model.add(Dense(self.state_size*2,input_dim=self.state_size,activation='relu',kernel_initializer="he_uniform"))
+        model.add(Dense(self.state_size*2,activation='relu',kernel_initializer="he_uniform"))
         model.add(Dense(self.action_size,activation='linear',kernel_initializer="he_uniform"))
         model.summary()
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
@@ -177,7 +175,7 @@ def getAction(cur_state):  # [cat_y,  c_x, c_y, sc_c_x, sc_c_y, s_x, s_y, sc_s_x
 
 						           #    0       1    2     3        4    5    6     7       8        9  
 def getStat(state_raw,state_size): # [cat_y,  c_x, c_y, sc_c_x, sc_c_y, s_x, s_y, sc_s_x, sc_s_y,  dog_y]
-    cat_x = -8.0
+    cat_x = 8.0
     cat_y = state_raw[0]
     dog_x = 8.0
     dog_y = state_raw[-1]
@@ -192,25 +190,32 @@ def getStat(state_raw,state_size): # [cat_y,  c_x, c_y, sc_c_x, sc_c_y, s_x, s_y
     skul_x_s = state_raw[7]
     skul_y_s = state_raw[8] 
 
-    cat_coin_dist_x = abs(cat_x - coin_x)
+    cat_coin_dist_x = cat_x - (-1.0*coin_x)
     cat_coin_dist_y = (cat_y - coin_y)
-    cat_skul_dist_x = abs(cat_x - skul_x)
+    cat_skul_dist_x = cat_x - (-1.0*skul_x)
     cat_skul_dist_y = (cat_y - skul_y)
     cat_skul_scalar_x = -1.0*skul_x_s
     cat_skul_scalar_y = skul_y_s
     cat_coin_scalar_x = -1.0*coin_x_s
     cat_coin_scalar_y = coin_y_s
+    cat_dog_Ydist = abs(cat_y - dog_y)
+    cat_coin_dist_y_abs = abs(cat_y - coin_y)
+    cat_skul_dist_y_abs = abs(cat_skul_dist_y)
 
-    dog_coin_dist_x = abs(dog_x - coin_x)
+
+    dog_coin_dist_x = dog_x - coin_x
     dog_coin_dist_y = (dog_y - coin_y)
-    dog_skul_dist_x = abs(dog_x - skul_x)
+    dog_skul_dist_x = dog_x - skul_x
     dog_skul_dist_y = (dog_y - skul_y)
     dog_skul_scalar_x = skul_x_s
     dog_skul_scalar_y = skul_y_s
     dog_coin_scalar_x = coin_x_s
     dog_coin_scalar_y = coin_y_s
-    result = [[cat_coin_dist_x,cat_coin_dist_y,cat_skul_dist_x,cat_skul_dist_y,cat_skul_scalar_x,cat_skul_scalar_y,cat_coin_scalar_x,cat_coin_scalar_y],
-             [dog_coin_dist_x,dog_coin_dist_y,dog_skul_dist_x,dog_skul_dist_y,dog_skul_scalar_x,dog_skul_scalar_y,dog_coin_scalar_x,dog_coin_scalar_y]]
+    dog_cat_Ydist = abs(dog_y - cat_y)
+    dog_coin_dist_y_abs = abs(dog_y - coin_y)
+    dog_skul_dist_y_abs = abs(dog_skul_dist_y)
+    result = [[cat_coin_dist_x,cat_coin_dist_y,cat_skul_dist_x,cat_skul_dist_y,cat_skul_scalar_x,cat_skul_scalar_y,cat_coin_scalar_x,cat_coin_scalar_y,cat_dog_Ydist,cat_coin_dist_y_abs,cat_skul_dist_y_abs],
+             [dog_coin_dist_x,dog_coin_dist_y,dog_skul_dist_x,dog_skul_dist_y,dog_skul_scalar_x,dog_skul_scalar_y,dog_coin_scalar_x,dog_coin_scalar_y,dog_cat_Ydist,dog_coin_dist_y_abs,dog_skul_dist_y_abs]]
     result[0] = np.reshape(result[0],[1,state_size])
     result[1] = np.reshape(result[1],[1,state_size])
     return result
@@ -220,13 +225,26 @@ if __name__ == "__main__":
     action = "0 1"
     cat_action_prev = 0
     dog_action_prev = 1
-    state_size = 8
+    state_size = 11
     action_size = 4
     frameNum_prev = 0
     agent = DQNAgent(state_size=state_size,action_size=action_size)
     scores, episodes, avg_qvals,global_step = [], [],[] ,0
+    if agent.load_model:
+        agent.model.load_weights("./save_model/breakout_dqn_.h5",by_name=False)
+        agent.update_target_model()
+        agent.epsilon = 0.001
+        with open("./save_graph/avg_qvals.csv") as f:
+            t = f.readlines()
+            avg_qvals = list(map(lambda x: float(x.strip()),t))
+        with open("./save_graph/scores.csv") as f:
+            t = f.readlines()
+            scores = list(map(lambda x: float(x.strip()),t))
+            
+    
     time_cur = 0
     time_pre = 0
+    leaveOnly_1 = lambda x: x if abs(x) > 0.9 else 0.0
     for e in range(EPISODES):
         done = False
         start_frameNum = 0
@@ -256,20 +274,25 @@ if __name__ == "__main__":
                     if frameNum_prev == frameNum:
                         frameNum_prev = frameNum
                         continue
-
                     global_step += 1
                     step += 1
                     cat_reward = response[1]
                     dog_reward = response[2]
-                    if abs(cat_reward) + abs(dog_reward) < 1.0:
-                        r = cat_reward + dog_reward
-                        score += r
+                    if 0.< cat_reward <1.:
+                        score += cat_reward
+                    if 0.< dog_reward <1.:
+                        score += dog_reward
+                    cat_reward = leaveOnly_1(cat_reward)
+                    dog_reward = leaveOnly_1(dog_reward)
                     state_raw = response[3:-1]
                     time_cur = int(response[-1])
                     if time_cur > time_pre:
                         done = time_cur % 30 == 0
                     time_pre = time_cur
                     cat_state,dog_state = getStat(state_raw,state_size)
+                    #print(cat_state)
+                    #print(dog_state)
+                    #print("---------------------------------------------")
                     if frameNum - start_frameNum < 3:
                         cat_action,dog_action = getAction(state_raw)
                     else:

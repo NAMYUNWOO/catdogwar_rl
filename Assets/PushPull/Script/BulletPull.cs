@@ -16,12 +16,12 @@ public class BulletPull : Bullet {
                 if (collider.gameObject.tag == "TargetCoin")
                 {
                     // dog action correct
-                    mgm.dogReward = 0.1f;
+                    mgm.dogReward = 0.01f;
                 }
                 else
                 {
                     // dog action incorrect
-                    mgm.dogReward = -0.1f;
+                    mgm.dogReward = -0.01f;
                 }
             }
             else
@@ -29,12 +29,12 @@ public class BulletPull : Bullet {
                 if (collider.gameObject.tag == "TargetCoin")
                 {
                     // cat action correct 
-                    mgm.catReward = 0.1f;
+                    mgm.catReward = 0.01f;
                 }
                 else
                 {
                     // cat action incorrect
-                    mgm.catReward = -0.1f;
+                    mgm.catReward = -0.01f;
                 }
             }
 

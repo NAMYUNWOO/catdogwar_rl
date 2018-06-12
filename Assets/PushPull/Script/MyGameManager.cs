@@ -149,16 +149,16 @@ public class MyGameManager : MonoBehaviour {
 
 
 	void Start () {
-		/*
+        /*
 		int isWheelGame = Random.Range (0, 2);
 		if (isWheelGame == 1) {
 			Instantiate (Wheel, new Vector2(0.0f,-1.0f), Quaternion.identity);
 		}
 		*/
+        Application.runInBackground = true;
 
 
-
-		Time.timeScale = TIMESCALE;
+        Time.timeScale = TIMESCALE;
 		currenturl = Application.absoluteURL; //"https://infinite-reaches-12370.herokuapp.com/game/cat";//
 		var array = currenturl.Split('/');
 		try{
@@ -226,7 +226,7 @@ public class MyGameManager : MonoBehaviour {
 			targetGen.coin.GetComponent<SpriteRenderer> ().color = new Color32 (255, 255, 255, 255);
 			targetGen.skull.GetComponent<SpriteRenderer> ().sprite = skull;
 			targetGen.isInfinityWar = false;
-			GameObject.Find ("Background").GetComponent<SpriteRenderer> ().sprite = bgSprite;
+			//GameObject.Find ("Background").GetComponent<SpriteRenderer> ().sprite = bgSprite;
 			//GameObject.Find ("UpBar").GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 0);
 			//GameObject.Find ("Win").GetComponent<TextMesh> ().color = new Color32 (0, 0, 0, 255);
 			//GameObject.Find ("Lose").GetComponent<TextMesh> ().color = new Color32 (0, 0, 0, 255);
