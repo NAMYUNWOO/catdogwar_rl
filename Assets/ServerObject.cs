@@ -195,7 +195,6 @@ public class ServerObject : MonoBehaviour
 		 * 
 		*/
 		msg = message;   // 1. getMessage from client, let process go.
-		print (message);
 		newReq = true;
 
         return _response;

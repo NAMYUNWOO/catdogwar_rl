@@ -38,11 +38,14 @@ public class MyGameManager : MonoBehaviour {
 	bool isDogGame;
 	TextMesh playerScoretxt;
 	TextMesh enemyScoretxt;
-	string currenturl = "";
+    TextMesh GameTime;
+    float reNewt = 3000.0f;
+    string currenturl = "";
 	string gameType = "game";
 	public float TIMESCALE = 10.0f;
     public Vector2 scoreAddVec_coin = new Vector2(0, 0);
     public Vector2 scoreAddVec_skul = new Vector2(0, 0);
+    
     public int GetPlayerScore(){
 		return PlayerScore;
 	}
@@ -69,13 +72,14 @@ public class MyGameManager : MonoBehaviour {
 	}
 
 	void GameTimeElapse(){
-		TextMesh GameTime =  GameObject.Find ("GameTime").GetComponent<TextMesh> ();
+		
 		GameTime.text = string.Format("{0}",GAMETIME.ToString("0"));
 		GAMETIME += Time.deltaTime;
-		if (GAMETIME >= 5000.0f) {
+		if (GAMETIME >= reNewt) {
 			//TimeEndScoreCompare ();
 			isEnd = true;
 		}
+
 	}
 	public void ScoreCounter(bool isCoinTarget,bool isBorderRight){
 		int playerScoreAdd = 0;
@@ -175,7 +179,9 @@ public class MyGameManager : MonoBehaviour {
 
 		playerScoretxt =  GameObject.Find ("PlayerScore").GetComponent<TextMesh> ();
 		enemyScoretxt =  GameObject.Find ("EnemyScore").GetComponent<TextMesh> ();
-		isDogGame = currenturl.EndsWith ("dog");
+        GameTime = GameObject.Find("GameTime").GetComponent<TextMesh>();
+
+        isDogGame = currenturl.EndsWith ("dog");
 
 		if (isDogGame) {
 			DogPlayer.GetComponent<ComputerPlayer> ().enabled = false;
