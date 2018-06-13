@@ -32,7 +32,7 @@ class DQNAgent:
         self.epsilon_decay_step = (self.epsilon_start - self.epsilon_end) / self.exploration_steps
         self.batch_size = 64
         self.train_start = 5000
-        self.update_target_rate = 1000
+        self.update_target_rate = 2000
         self.discount_factor = 0.99
         self.learning_rate = 0.001
         self.memory = deque(maxlen=10000)
@@ -244,7 +244,7 @@ if __name__ == "__main__":
     
     time_cur = 0
     time_pre = 0
-    leaveOnly_1 = lambda x: x if abs(x) > 0.9 else 0.0
+    ignoreUnder1 = lambda x: x if abs(x) > 0.9 else 0.0
     for e in range(EPISODES):
         done = False
         start_frameNum = 0
@@ -259,84 +259,82 @@ if __name__ == "__main__":
             poller = zmq.Poller()
             poller.register(socket, zmq.POLLIN)
             evt = dict(poller.poll(TIMEOUT))
-            if evt:
-                if evt.get(socket) == zmq.POLLIN:
-                    response = socket.recv(zmq.NOBLOCK).decode("utf-8")
-                    if response == "res_skip":
-                        continue
-                    response = np.array(list(map(lambda x:float(x),response.split(" "))))
-                    frameNum = int(response[0])
-                    if not isStart:
-                        start_frameNum = frameNum-1
-                        frameNum_prev = frameNum-1
-                        isStart = True
-
-                    if frameNum_prev == frameNum:
-                        frameNum_prev = frameNum
-                        continue
-                    global_step += 1
-                    step += 1
-                    cat_reward = response[1]
-                    dog_reward = response[2]
-                    if 0.< cat_reward <1.:
-                        score += cat_reward
-                    if 0.< dog_reward <1.:
-                        score += dog_reward
-                    cat_reward = leaveOnly_1(cat_reward)
-                    dog_reward = leaveOnly_1(dog_reward)
-                    state_raw = response[3:-1]
-                    time_cur = int(response[-1])
-                    if time_cur > time_pre:
-                        done = time_cur % 30 == 0
-                    time_pre = time_cur
-                    cat_state,dog_state = getStat(state_raw,state_size)
-                    #print(cat_state)
-                    #print(dog_state)
-                    #print("---------------------------------------------")
-                    if frameNum - start_frameNum < 3:
-                        cat_action,dog_action = getAction(state_raw)
-                    else:
-                        cat_action = agent.get_action(cat_state)
-                        dog_action = agent.get_action(dog_state)
-                        agent.append_memory(cat_state_prev,cat_action_prev,cat_reward,cat_state,False)
-                        agent.append_memory(dog_state_prev,dog_action_prev,dog_reward,dog_state,False)
-                        agent.train_replay()
-
-                    if global_step % agent.update_target_rate == 0:
-                        agent.update_target_model()
-
-                    action = str(cat_action)+" "+str(dog_action)
-                    #print(list(map(lambda x : round(x,2),response))+[action])
-                    frameNum_prev = frameNum
-                    cat_state_prev = cat_state
-                    dog_state_prev = dog_state
-                    cat_action_prev = cat_action
-                    dog_action_prev = dog_action
-                    
-                    if done:
-                        avg_qval = agent.avg_q_max / float(step)
-                        if global_step > agent.train_start:
-                            stats = [score,avg_qval, step]
-                            for i in range(len(stats)):
-                                agent.sess.run(agent.update_ops[i], feed_dict={
-                                    agent.summary_placeholders[i]: float(stats[i])
-                                })
-                            summary_str = agent.sess.run(agent.summary_op)
-                            agent.summary_writer.add_summary(summary_str, e + 1)
-                        scores.append(score)
-                        avg_qvals.append(avg_qval)
-                        episodes.append(e)
-                        print("episode:", e, "  score:", score, "  memory length:",len(agent.memory), "  epsilon:", round(agent.epsilon,4),
-                            "  global_step:", global_step, "  average_q:",avg_qval)
-                        agent.avg_q_max, agent.avg_loss = 0, 0
-
+            if not evt:
+                print("no evt")
+                time.sleep(0.1)
+                socket.close()
+                socket = context.socket(zmq.REQ)
+                socket.connect("tcp://localhost:12346")
+                continue
+            if evt.get(socket) == zmq.POLLIN:
+                response = socket.recv(zmq.NOBLOCK).decode("utf-8")
+                if response == "res_skip":
                     continue
-            print("no evt")
-            time.sleep(0.1)
-            socket.close()
-            socket = context.socket(zmq.REQ)
-            socket.connect("tcp://localhost:12346")
+                response = np.array(list(map(lambda x:float(x),response.split(" "))))
+                frameNum = int(response[0])
+                if not isStart:
+                    start_frameNum = frameNum-1
+                    frameNum_prev = frameNum-1
+                    isStart = True
 
+                if frameNum_prev == frameNum:
+                    frameNum_prev = frameNum
+                    continue
+                global_step += 1
+                step += 1
+                cat_reward = response[1]
+                dog_reward = response[2]
+                if 0.< cat_reward <1.:
+                    score += cat_reward
+                if 0.< dog_reward <1.:
+                    score += dog_reward
+                cat_reward = ignoreUnder1(cat_reward)
+                dog_reward = ignoreUnder1(dog_reward)
+                state_raw = response[3:-1]
+                time_cur = int(response[-1])
+                if time_cur > time_pre:
+                    done = time_cur % 30 == 0
+                time_pre = time_cur
+                cat_state,dog_state = getStat(state_raw,state_size)
+                #print(cat_state)
+                #print(dog_state)
+                #print("---------------------------------------------")
+                if frameNum - start_frameNum < 3:
+                    cat_action,dog_action = getAction(state_raw)
+                else:
+                    cat_action = agent.get_action(cat_state)
+                    dog_action = agent.get_action(dog_state)
+                    agent.append_memory(cat_state_prev,cat_action_prev,cat_reward,cat_state,False)
+                    agent.append_memory(dog_state_prev,dog_action_prev,dog_reward,dog_state,False)
+                    agent.train_replay()
+
+                if global_step % agent.update_target_rate == 0:
+                    agent.update_target_model()
+
+                action = str(cat_action)+" "+str(dog_action)
+                #print(list(map(lambda x : round(x,2),response))+[action])
+                frameNum_prev = frameNum
+                cat_state_prev = cat_state
+                dog_state_prev = dog_state
+                cat_action_prev = cat_action
+                dog_action_prev = dog_action
+                
+                if done:
+                    avg_qval = agent.avg_q_max / float(step)
+                    if global_step > agent.train_start:
+                        stats = [score,avg_qval, step]
+                        for i in range(len(stats)):
+                            agent.sess.run(agent.update_ops[i], feed_dict={
+                                agent.summary_placeholders[i]: float(stats[i])
+                            })
+                        summary_str = agent.sess.run(agent.summary_op)
+                        agent.summary_writer.add_summary(summary_str, e + 1)
+                    scores.append(score)
+                    avg_qvals.append(avg_qval)
+                    episodes.append(e)
+                    print("episode:", e, "  score:", score, "  memory length:",len(agent.memory), "  epsilon:", round(agent.epsilon,4),
+                        "  global_step:", global_step, "  average_q:",avg_qval)
+                    agent.avg_q_max, agent.avg_loss = 0, 0
         if e % 10 == 0:
             try:
                 agent.model.save_weights("./save_model/breakout_dqn_.h5")

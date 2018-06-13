@@ -72,7 +72,7 @@ public class MyGameManager : MonoBehaviour {
 		TextMesh GameTime =  GameObject.Find ("GameTime").GetComponent<TextMesh> ();
 		GameTime.text = string.Format("{0}",GAMETIME.ToString("0"));
 		GAMETIME += Time.deltaTime;
-		if (GAMETIME <= 0.1f) {
+		if (GAMETIME >= 5000.0f) {
 			//TimeEndScoreCompare ();
 			isEnd = true;
 		}
@@ -291,6 +291,7 @@ public class MyGameManager : MonoBehaviour {
 			skullcnt = 0;
 			catReward = 0;
 			dogReward = 0;
+            /*
 			GameObject[] gObjs = GameObject.FindGameObjectsWithTag ("TargetCoin");
 			for (int i = 0; i < gObjs.Length; i++) {
 				Destroy (gObjs [i]);
@@ -299,10 +300,12 @@ public class MyGameManager : MonoBehaviour {
 			for (int i = 0; i < skgObjs.Length; i++) {
 				Destroy (skgObjs [i]);
 			}
+            */
 		} else {
 			GameTimeElapse ();
 
 		}
+
 		if (isEnd) {
 			SceneManager.LoadScene( SceneManager.GetActiveScene().name );
 			isEnd = false;
