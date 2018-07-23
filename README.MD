@@ -15,5 +15,10 @@
 ### 학습 녹화 비디오
 [![link youtube](https://img.youtube.com/vi/-AmrmdgaHVo/0.jpg)](https://youtu.be/-AmrmdgaHVo)
 
-#### 상세한 문서화는 추후에 올리겠습니다
+### 발표 슬라이드
+[![link youtube](https://img.youtube.com/vi/-GBYZIW9BCVI/0.jpg)](https://youtu.be/GBYZIW9BCVI)
+
+---
+### essay 
+
 
