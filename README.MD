@@ -24,11 +24,17 @@
 ### essay 
 
 ![essay1](https://i.imgur.com/OCk4w4q.png)
+
 ---
 ![essay2](https://i.imgur.com/TacUTBA.png)
+
 ---
+
 ![essay3](https://i.imgur.com/XcbQ3J3.png)
+
 ---
+
 ![essay4](https://i.imgur.com/HfdaJp5.png)
+
 ---
 
