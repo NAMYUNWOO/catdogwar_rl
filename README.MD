@@ -16,7 +16,7 @@
 [![link youtube](https://img.youtube.com/vi/-AmrmdgaHVo/0.jpg)](https://youtu.be/-AmrmdgaHVo)
 
 ### 발표 슬라이드
-[![link youtube](https://img.youtube.com/vi/-GBYZIW9BCVI/0.jpg)](https://youtu.be/GBYZIW9BCVI)
+[![link youtube](https://i.ytimg.com/vi/GBYZIW9BCVI/hqdefault.jpg?sqp=-oaymwEXCNACELwBSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLBeB1Q4ft4iTE-W0TGY19o6jrodYg)](https://youtu.be/GBYZIW9BCVI)
 
 ---
 ### essay 
