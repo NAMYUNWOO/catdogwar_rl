@@ -23,7 +23,7 @@
 [pc webgame link](https://infinite-reaches-12370.herokuapp.com/demogame/cat)
 
 ---
-## 발표 슬라이드
+## 프로젝트 슬라이드
 (하단이미지 클릭)<br>
 [![link youtube](https://i.imgur.com/343kUVN.png)](https://youtu.be/GBYZIW9BCVI)
 
