@@ -19,8 +19,8 @@
 ---
 ## DemoGame
 
-[mobile (ios only)](https://itunes.apple.com/kr/app/ani-pong/id1400903852?platform=iphone&preserveScrollPosition=true#platform/iphone)
-[pc webgame](https://infinite-reaches-12370.herokuapp.com/demogame/cat)
+[mobile (ios only) link](https://itunes.apple.com/kr/app/ani-pong/id1400903852?platform=iphone&preserveScrollPosition=true#platform/iphone)<br>
+[pc webgame link](https://infinite-reaches-12370.herokuapp.com/demogame/cat)
 
 ---
 ## 발표 슬라이드
