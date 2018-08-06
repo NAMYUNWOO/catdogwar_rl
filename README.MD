@@ -1,11 +1,10 @@
-## 고양이와 강아지가 스스로 잘 싸울수 있도록 도와주는 강화학습 프로젝트 입니다.
+## Adversarial Game-Agent Learning with DQN.
 
 ## 실행방법
     1. CatDogGame_exe.zip 를 다운받으신후 exe 파일을 1280 * 720, windowed 설정으로 실행하시고
     2. breakout_dqn.py을 터미널을 통해 실행해줍시다 ( > python ./breakout_dqn.py )
 
-#### 1. 싸우면서 자라는 고양이와 강아지를 볼 수 있습니다. ^^ 
-#### 2. 파이썬 dependencies 는 다음과 같습니다. 
+#### 1. 파이썬 dependencies 는 다음과 같습니다. 
     * Tensorflow 1.8 이상
     * ZeroMQ
     * keras
