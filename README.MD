@@ -1,6 +1,6 @@
-## Adversarial Game-Agent Learning with DQN
+# Adversarial Game-Agent Learning with DQN
 
-## 실행방법
+#### 실행방법
     1. CatDogGame_exe.zip 를 다운받으신후 exe 파일을 1280 * 720, windowed 설정으로 실행하시고
     2. breakout_dqn.py을 터미널을 통해 실행해줍시다 ( > python ./breakout_dqn.py )
 
